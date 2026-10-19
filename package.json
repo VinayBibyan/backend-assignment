@@ -1,0 +1,37 @@
+{
+  "name": "backend-assignment",
+  "version": "1.0.0",
+  "main": "dist/server.js",
+  "scripts": {
+    "dev": "nodemon --exec tsx src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "build:check": "tsc --noEmit"
+  },
+  "keywords": [
+    "nodejs",
+    "typescript",
+    "express",
+    "mongodb",
+    "mongoose",
+    "rest-api"
+  ],
+  "author": "",
+  "license": "ISC",
+  "description": "REST API for a session booking platform - Users can book sessions with teachers",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.8",
+    "express": "^5.3.0",
+    "express-validator": "^7.3.2",
+    "mongoose": "^9.11.2"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.5",
+    "nodemon": "^3.1.14",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}

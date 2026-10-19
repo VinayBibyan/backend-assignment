@@ -1,0 +1,417 @@
+{
+  "info": {
+    "name": "Session Booking Platform API",
+    "description": "REST API for a platform where users can book sessions with teachers.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "userId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "teacherId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "sessionId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            },
+            "description": "Check if the server is running."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Create User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();",
+                  "if (response.success && response.data) {",
+                  "    pm.collectionVariables.set('userId', response.data._id);",
+                  "    console.log('User ID saved:', response.data._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"John Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"phone\": \"+1234567890\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            },
+            "description": "Create a new user. Email must be unique."
+          },
+          "response": []
+        },
+        {
+          "name": "Create User - Duplicate Email",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"John Doe Copy\",\n  \"email\": \"john.doe@example.com\",\n  \"phone\": \"+9876543210\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            },
+            "description": "Attempt to create a user with a duplicate email. Should return 409."
+          },
+          "response": []
+        },
+        {
+          "name": "Create User - Validation Error",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"\",\n  \"email\": \"invalid-email\",\n  \"phone\": \"\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            },
+            "description": "Attempt to create a user with invalid data. Should return 400."
+          },
+          "response": []
+        },
+        {
+          "name": "Get User Sessions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId}}/sessions",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "{{userId}}", "sessions"]
+            },
+            "description": "Get all sessions for a user, separated into upcoming and completed."
+          },
+          "response": []
+        },
+        {
+          "name": "Get User Sessions - Invalid User ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/000000000000000000000000/sessions",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "000000000000000000000000", "sessions"]
+            },
+            "description": "Attempt to get sessions for a non-existent user. Should return 404."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Teachers",
+      "item": [
+        {
+          "name": "Create Teacher",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();",
+                  "if (response.success && response.data) {",
+                  "    pm.collectionVariables.set('teacherId', response.data._id);",
+                  "    console.log('Teacher ID saved:', response.data._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Jane Smith\",\n  \"email\": \"jane.smith@example.com\",\n  \"specialization\": \"Mathematics\",\n  \"experience\": 5\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/teachers",
+              "host": ["{{baseUrl}}"],
+              "path": ["teachers"]
+            },
+            "description": "Create a new teacher."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Sessions",
+      "item": [
+        {
+          "name": "Create Session",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();",
+                  "if (response.success && response.data) {",
+                  "    pm.collectionVariables.set('sessionId', response.data._id);",
+                  "    console.log('Session ID saved:', response.data._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"teacherId\": \"{{teacherId}}\",\n  \"startTime\": \"2026-10-20T10:00:00.000Z\",\n  \"endTime\": \"2026-10-20T11:00:00.000Z\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sessions",
+              "host": ["{{baseUrl}}"],
+              "path": ["sessions"]
+            },
+            "description": "Create a new session for a teacher. Status defaults to AVAILABLE."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Session - Invalid Teacher",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"teacherId\": \"000000000000000000000000\",\n  \"startTime\": \"2026-10-20T10:00:00.000Z\",\n  \"endTime\": \"2026-10-20T11:00:00.000Z\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sessions",
+              "host": ["{{baseUrl}}"],
+              "path": ["sessions"]
+            },
+            "description": "Attempt to create a session for a non-existent teacher. Should return 404."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Session - Invalid Time Range",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"teacherId\": \"{{teacherId}}\",\n  \"startTime\": \"2026-10-20T11:00:00.000Z\",\n  \"endTime\": \"2026-10-20T10:00:00.000Z\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sessions",
+              "host": ["{{baseUrl}}"],
+              "path": ["sessions"]
+            },
+            "description": "Attempt to create a session where endTime < startTime. Should return 400."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Available Sessions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sessions/available?dateTimestamp=1792594800000",
+              "host": ["{{baseUrl}}"],
+              "path": ["sessions", "available"],
+              "query": [
+                {
+                  "key": "dateTimestamp",
+                  "value": "1792594800000",
+                  "description": "Unix timestamp in ms for 2026-10-20"
+                }
+              ]
+            },
+            "description": "Get all available sessions for a specific date using aggregation pipeline."
+          },
+          "response": []
+        },
+        {
+          "name": "Book Session",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"{{userId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sessions/{{sessionId}}/book",
+              "host": ["{{baseUrl}}"],
+              "path": ["sessions", "{{sessionId}}", "book"]
+            },
+            "description": "Book an available session for a user."
+          },
+          "response": []
+        },
+        {
+          "name": "Book Session - Already Booked",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"{{userId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sessions/{{sessionId}}/book",
+              "host": ["{{baseUrl}}"],
+              "path": ["sessions", "{{sessionId}}", "book"]
+            },
+            "description": "Attempt to book an already booked session. Should return 409."
+          },
+          "response": []
+        },
+        {
+          "name": "Book Session - Non-existent Session",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"{{userId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sessions/000000000000000000000000/book",
+              "host": ["{{baseUrl}}"],
+              "path": ["sessions", "000000000000000000000000", "book"]
+            },
+            "description": "Attempt to book a non-existent session. Should return 404."
+          },
+          "response": []
+        },
+        {
+          "name": "Mark Session Complete",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sessions/{{sessionId}}/complete",
+              "host": ["{{baseUrl}}"],
+              "path": ["sessions", "{{sessionId}}", "complete"]
+            },
+            "description": "Mark a booked session as completed."
+          },
+          "response": []
+        },
+        {
+          "name": "Mark Session Complete - Not Booked",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sessions/{{sessionId}}/complete",
+              "host": ["{{baseUrl}}"],
+              "path": ["sessions", "{{sessionId}}", "complete"]
+            },
+            "description": "Attempt to complete an already completed session. Should return 400."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
